@@ -31,11 +31,11 @@ _flow_
 bash ./download-and-start-kafka.sh
 
 ./gradlew -DmainClass=com.github.daggerok.ConsumerV1Kt
-mv ./build/install/kafka-java-example ./build/consumer
+mv -f ./build/install/kafka-java-example ./build/consumer
 bash ./build/consumer/bin/kafka-java-example &
 
 ./gradlew -DmainClass=com.github.daggerok.ProducerV1Kt
-mv ./build/install/kafka-java-example ./build/producer
+mv -f ./build/install/kafka-java-example ./build/producer
 bash ./build/producer/bin/kafka-java-example one and two and three and four...
 
 killall -9 java
