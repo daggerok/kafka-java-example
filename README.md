@@ -1,4 +1,4 @@
-# kafka...
+# kafka getting started
 
 _download and bootstrap kafka (unix)_
 
