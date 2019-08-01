@@ -4,8 +4,8 @@ _download and bootstrap kafka (unix)_
 
 ```bash
 bash ./download-and-start-kafka.sh
-netstat -aln|grep 2181
-netstat -aln|grep 9092
+netstat -aln | grep 2181
+netstat -aln | grep 9092
 ```
 
 another way to start kafka in docker:
