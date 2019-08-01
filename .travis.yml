@@ -1,0 +1,94 @@
+env:
+  global:
+    - TERM=dumb
+dist: trusty
+notifications:
+  email: false
+git:
+  quiet: true
+  depth: 1
+language: java
+jdk: openjdk8
+node_js: lts/*
+python: 3
+services:
+  - docker
+addons:
+  apt:
+    update: true
+    packages:
+      - jq
+      - bash
+      - sudo
+      - lsof
+      - wget
+      - curl
+      - unzip
+      - python3-pip
+      - docker-ce
+install: true
+before_install:
+  - export PATH=$HOME/.local/bin:$PATH
+  - pip3 install --user $(whoami) --upgrade pip
+  - pip install --user $(whoami) --upgrade httpie
+  - http --version --debug
+  - docker-compose version
+  #
+  - source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+  - stop_any 80 8001 8002 8080 5432
+jobs:
+  include:
+    - stage: test
+      jdk: openjdk8
+      name: dependency updates
+      script: cd $TRAVIS_BUILD_DIR && ./gradlew dependencyUpdates -Drevision=release
+    - stage: test
+      jdk: openjdk8
+      name: integration tests
+      script:
+        - cd /tmp
+        - git clone --depth=1 https://github.com/confluentinc/cp-docker-images.git c
+        - docker-compose -f ./c/examples/kafka-single-node/docker-compose.yml up -d
+        #
+        - cd $TRAVIS_BUILD_DIR
+        - ./gradlew clean
+        - ./gradlew -DmainClass=com.github.daggerok.ConsumerV1Kt
+        - mv -f ./build/install/kafka-java-example ./build/consumer
+        - bash ./build/consumer/bin/kafka-java-example &
+        #
+        - ./gradlew -DmainClass=com.github.daggerok.ProducerV1Kt
+        - mv -f ./build/install/kafka-java-example ./build/producer
+        - bash ./build/producer/bin/kafka-java-example one and two and three and four...
+        #
+        - killall -9 java || echo 'oops...'
+        - docker-compose -f /tmp/c/examples/kafka-single-node/docker-compose.yml down -v --rmi local
+    - stage: test
+      jdk: openjdk11
+      name: dependency updates jdk11
+      script: cd $TRAVIS_BUILD_DIR && ./gradlew dependencyUpdates -Drevision=release
+    - stage: test
+      jdk: openjdk11
+      name: integration tests jdk11
+      script:
+        - cd /tmp
+        - git clone --depth=1 https://github.com/confluentinc/cp-docker-images.git c
+        - docker-compose -f ./c/examples/kafka-single-node/docker-compose.yml up -d
+        #
+        - cd $TRAVIS_BUILD_DIR
+        - ./gradlew clean
+        - ./gradlew -DmainClass=com.github.daggerok.ConsumerV1Kt
+        - mv -f ./build/install/kafka-java-example ./build/consumer
+        - bash ./build/consumer/bin/kafka-java-example &
+        #
+        - ./gradlew -DmainClass=com.github.daggerok.ProducerV1Kt
+        - mv -f ./build/install/kafka-java-example ./build/producer
+        - bash ./build/producer/bin/kafka-java-example one and two and three and four...
+        #
+        - killall -9 java || echo 'oops...'
+        - docker-compose -f /tmp/c/examples/kafka-single-node/docker-compose.yml down -v --rmi local
+cache:
+  directories:
+    - ~/.embedmongo
+    - ~/.gradle
+  packages: true
+  pip: true

@@ -1,5 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm").version("1.3.11")
+    id("com.github.ben-manes.versions").version("0.21.0")
+    id("org.jetbrains.kotlin.jvm").version("1.3.41")
     application
 }
 
@@ -12,7 +13,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     // kafka
-    val kafkaVersion: String by lazy { "2.1.1" }
+    val kafkaVersion: String by lazy { "2.3.0" }
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 }
 
@@ -30,7 +31,7 @@ sourceSets {
 
 tasks {
     "wrapper"(Wrapper::class) {
-        gradleVersion = "5.2.1"
+        gradleVersion = "5.6-rc-1"
     }
 }
 

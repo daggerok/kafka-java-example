@@ -8,6 +8,14 @@ netstat -aln|grep 2181
 netstat -aln|grep 9092
 ```
 
+another way to start kafka in docker:
+
+```bash
+git clone --depth=1 https://github.com/confluentinc/cp-docker-images.git
+docker-compose -f cp-docker-images/examples/kafka-single-node/docker-compose.yml up -d
+# docker-compose -f cp-docker-images/examples/kafka-single-node/docker-compose.yml down -v --rmi local
+```
+
 <!--
 
 _prepare maven sample project_
