@@ -90,5 +90,6 @@ cache:
   directories:
     - ~/.embedmongo
     - ~/.gradle
+    - ~/.docker
   packages: true
   pip: true
